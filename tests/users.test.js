@@ -30,3 +30,23 @@ test("POST /users with no body returns 400", async () => {
 
   assert.strictEqual(res.status, 400);
 });
+
+test("DELETE /users/:id removes the user", async () => {
+  // Create a throwaway user so the seed data stays intact for other tests.
+  const created = await request(app)
+    .post("/users")
+    .send({ name: "Temp", email: "temp@example.com" });
+
+  const res = await request(app).delete(`/users/${created.body.id}`);
+  assert.strictEqual(res.status, 204);
+
+  const after = await request(app).get(`/users/${created.body.id}`);
+  assert.strictEqual(after.status, 404);
+});
+
+test("DELETE /users/:id returns 404 for a user that does not exist", async () => {
+  const res = await request(app).delete("/users/9999");
+
+  assert.strictEqual(res.status, 404);
+  assert.strictEqual(res.body.error, "User not found");
+});

@@ -24,4 +24,15 @@ function createUser({ name, email }) {
   return user;
 }
 
-module.exports = { getAllUsers, getUserById, createUser };
+// Removes the user with this id. Returns the removed user, or undefined if
+// no user had that id.
+function deleteUser(id) {
+  const index = users.findIndex((user) => user.id === id);
+  if (index === -1) {
+    return undefined;
+  }
+  const [removed] = users.splice(index, 1);
+  return removed;
+}
+
+module.exports = { getAllUsers, getUserById, createUser, deleteUser };
